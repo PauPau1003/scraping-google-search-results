@@ -50,7 +50,7 @@ async function getAllResults(query) {
       headless: false,
       // devtools: true,
       executablePath:
-        "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+        "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
     });
 
     // const browser = await puppeteerExtra.launch({
@@ -64,7 +64,7 @@ async function getAllResults(query) {
     const page = await browser.newPage();
 
     await page.goto(
-      `https://www.google.com/search?q=${query.split(" ").join("+")}`
+      `https://www.google.com/search?q=${query.split(" ").join("+")}&tbm=nws`
     );
 
     async function autoScroll(page) {
@@ -110,11 +110,11 @@ async function getAllResults(query) {
       }
 
       function clickMoreResults() {
-        const h3Elements = document.querySelectorAll("h3");
-
-        for (const h3 of h3Elements) {
-          if (h3.textContent.includes("More results")) {
-            h3.click();
+        // const h3Elements = document.querySelectorAll("h3");
+        const spanElements = document.querySelectorAll('span')
+        for (const span of spanElements) {
+          if (span.textContent.includes("Next")) {
+            span.click();
             return true; // Indicate that the "More results" was clicked
           }
         }
@@ -148,7 +148,10 @@ async function getAllResults(query) {
 
     const $ = cheerio.load(html);
     const h3s = [];
+    const divs = [];
     const links = [];
+
+    const description = [];
     // get all h3 tags
     const h3Tags = $("h3");
     const all = [];
@@ -172,7 +175,7 @@ async function getAllResults(query) {
 }
 
 (async () => {
-  const query = "site:crunchbase.com/organization";
+  const query = "top events happening in Singapore soon";
   const firstPage = await getFirstPage(query);
-  // const results = await getAllResults(query);
+  const results = await getAllResults(query);
 })();
